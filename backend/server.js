@@ -1,31 +1,52 @@
-import express from 'express'
-import cors from 'cors'
-import 'dotenv/config'
-import connectDB from './config/mongodb.js'
-import connectCloudinary from './config/cloudinary.js'
-import userRouter from './routes/userRoute.js'
-import productRouter from './routes/productRoute.js'
-import cartRouter from './routes/cartRoute.js'
-import orderRouter from './routes/orderRoute.js'
+import express from 'express';
+import cors from 'cors';
+import 'dotenv/config';
+import path from 'path';
+import connectDB from './config/mongodb.js';
+import connectCloudinary from './config/cloudinary.js';
+import userRouter from './routes/userRoute.js';
+import productRouter from './routes/productRoute.js';
+import cartRouter from './routes/cartRoute.js';
+import orderRouter from './routes/orderRoute.js';
 
 // App Config
-const app = express()
-const port = process.env.PORT || 4000
-connectDB()
-connectCloudinary()
+const app = express();
+const port = process.env.PORT || 4000;
 
-// middlewares
-app.use(express.json())
-app.use(cors())
+// Validate environment variables
+if (!process.env.MONGODB_URI || !process.env.CLOUDINARY_API_KEY || !process.env.JWT_SECRET) {
+    console.error('Missing required environment variables');
+    process.exit(1);
+}
 
-// api endpoints
-app.use('/api/user',userRouter)
-app.use('/api/product',productRouter)
-app.use('/api/cart',cartRouter)
-app.use('/api/order',orderRouter)
+// Connect to services
+connectDB();
+connectCloudinary();
 
-app.get('/',(req,res)=>{
-    res.send("API Working")
-})
+// Middlewares
+app.use(express.json());
+app.use(cors({
+    origin: ['https://riivor.com'], // Replace with your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+}));
 
-app.listen(port, ()=> console.log('Server started on PORT : '+ port))
+// API Endpoints
+app.use('/api/user', userRouter);
+app.use('/api/product', productRouter);
+app.use('/api/cart', cartRouter);
+app.use('/api/order', orderRouter);
+
+// Health Check
+app.get('/', (req, res) => {
+    res.send("API Working");
+});
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something went wrong!' });
+});
+
+// Start Server
+app.listen(port, () => console.log('Server started on PORT : ' + port));
