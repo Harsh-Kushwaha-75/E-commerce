@@ -28,6 +28,19 @@ const Footer = () => {
             <ul className='flex flex-col gap-1 text-gray-600'>
                 <li>+91 9259797411</li>
                 <li>riivor01@gmail.com</li>
+                <ul className="flex items-center" >
+                  <li>
+                    <a href="https://www.instagram.com/riivor_?igsh=MWxsOXVxeHVtZHhlag%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer">
+                      <img src={assets.instagram} className='w-4 h-4 mr-2' alt="" />
+                    </a>
+                  </li>
+                  <li>
+                    <a href="" target="_blank" rel='noopener noreferrer'>
+                      <img src={assets.youtube} className='w-4 h-5 mr-2'  alt="" />
+                    </a>
+                  </li>
+                </ul>
+
             </ul>
         </div>
 
